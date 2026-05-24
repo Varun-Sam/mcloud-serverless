@@ -239,4 +239,21 @@ https://YOUR_API_ID.execute-api.localhost.localstack.cloud:4566/prod/images/IMAG
 
 # Unit Tests To Add
 
+## Unit Testing
 
+Implemented unit tests using pytest and unittest.mock.
+
+The tests validate Lambda business logic independently by mocking AWS services such as S3 and DynamoDB.
+
+Test Coverage:
+- Upload Image Lambda
+- List Images Lambda
+- Get Image Lambda
+- Delete Image Lambda
+
+Run individual tests:
+
+python -m pytest tests/test_upload_image.py -v
+python -m pytest tests/test_list_images.py -v
+python -m pytest tests/test_get_image.py -v
+python -m pytest tests/test_delete_image.py -v
