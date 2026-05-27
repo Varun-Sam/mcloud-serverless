@@ -1,0 +1,121 @@
+DOCKER COMMANDS
+| --------------------------------------- | ---------------------------------------- |
+| Command                                 | Purpose                                  |
+| --------------------------------------- | ---------------------------------------- |
+| `docker pull localstack/localstack:3.5` | Download LocalStack image                |
+| `docker compose up -d`                  | Start LocalStack container in background |
+| `docker logs localstack`                | View LocalStack logs                     |
+| `docker compose down`                   | Stop and remove running containers       |
+| `docker ps`                             | Show running containers                  |
+| `docker ps -a`                          | Show all containers (including stopped)  |
+| `docker images`                         | Show downloaded Docker images            |
+| `docker rmi IMAGE_ID`                   | Delete image                             |
+| `docker rm CONTAINER_ID`                | Delete container                         |
+| --------------------------------------- | ---------------------------------------- |
+
+
+- SHUT DOWN CONTAINER
+docker compose down -v
+
+
+- START CONTAINER
+docker compose up -d
+
+
+- activate vnv
+.venv\Scripts\activate
+
+
+- Set credentials
+set AWS_ACCESS_KEY_ID=test
+set AWS_SECRET_ACCESS_KEY=test
+set AWS_DEFAULT_REGION=us-east-1
+
+
+- Bootstrap
+cdklocal bootstrap
+
+
+- Deploy
+cdklocal deploy
+
+
+- verify s3
+aws --endpoint-url=http://localhost:4566 s3 ls
+
+
+- verify DDB
+aws --endpoint-url=http://localhost:4566 dynamodb list-tables
+
+
+- verify lambda
+aws --endpoint-url=http://localhost:4566 lambda list-functions
+
+
+DELETE RSS
+DDB
+aws --endpoint-url=http://localhost:4566 dynamodb delete-table ^
+--table-name images_metadata
+
+
+S3
+aws --endpoint-url=http://localhost:4566 s3 rb s3://images-bucket --force
+
+
+Lambda
+aws --endpoint-url=http://localhost:4566 lambda delete-function ^
+--function-name upload-image
+
+
+convert image to base64
+powershell -command "[Convert]::ToBase64String([System.IO.File]::ReadAllBytes('sample.jpg'))"
+powershell -command "[Convert]::ToBase64String([System.IO.File]::ReadAllBytes('space.jpg'))"
+
+
+
+TEST COMMANDS
+
+- IMAGE UPLOAD
+
+curl -X POST ^
+https://b8hxscrkrt.execute-api.localhost.localstack.cloud:4566/prod/images ^
+-H "Content-Type: application/json" ^
+-d @C:\Projects\MCloud\src\upload_image\payload_space_image.json
+
+
+curl -X POST ^
+https://b8hxscrkrt.execute-api.localhost.localstack.cloud:4566/prod/images ^
+-H "Content-Type: application/json" ^
+-d @C:\Projects\MCloud\src\upload_image\payload_sample_image.json
+
+
+
+LIST
+curl https://b8hxscrkrt.execute-api.localhost.localstack.cloud:4566/prod/images
+curl https://b8hxscrkrt.execute-api.localhost.localstack.cloud:4566/prod/images?user_id=user123
+curl https://b8hxscrkrt.execute-api.localhost.localstack.cloud:4566/prod/images?title=space
+
+
+
+GET IMAGE
+curl https://b8hxscrkrt.execute-api.localhost.localstack.cloud:4566/prod/images/6a30ac54-1c5a-4948-bc49-f216ed922ea6
+
+
+DELETE IMAGE
+curl -X DELETE ^
+https://b8hxscrkrt.execute-api.localhost.localstack.cloud:4566/prod/images/9c7908f4-7821-4446-b685-c3396574a79b
+
+
+
+
+
+PYTEST 
+- Test single file
+python -m pytest tests/test_upload_image.py -v
+python -m pytest tests/test_list_images.py -v
+python -m pytest tests/test_get_image.py -v
+python -m pytest tests/test_delete_image.py -v
+
+- Test Function
+python -m pytest tests/test_upload_image.py::test_upload_image_success -v
+
